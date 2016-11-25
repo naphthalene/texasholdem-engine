@@ -57,6 +57,7 @@ public class IOPlayer implements Runnable {
         if (!this.finished) {
         	switch (type) {
         	case "input":
+                System.out.println("in: " + line);
                 try {
             		this.inputStream.write(line + "\n");
             		this.inputStream.flush();
@@ -66,10 +67,10 @@ public class IOPlayer implements Runnable {
                 addToDump(line + "\n");
         		break;
         	case "output":
-    //    		System.out.println("out: " + line);
+       		    System.out.println("out: " + line);
         		break;
         	case "error":
-    //    		System.out.println("error: " + line);
+       		    System.out.println("error: " + line);
         		break;
         	}
         }
@@ -157,7 +158,7 @@ public class IOPlayer implements Runnable {
     @Override
     // start communication with the bot
     public void run() {
-        this.outputGobbler.start();
-        this.errorGobbler.start();
+        // this.outputGobbler.start();
+        // this.errorGobbler.start();
     }
 }

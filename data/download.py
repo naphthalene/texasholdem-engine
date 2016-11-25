@@ -16,8 +16,8 @@ PACKAGES = (
     "holdem1",
     "holdem2",
     "holdem3",
-    "holdempot",
-    "nolimit",
+    # "holdempot",
+    # "nolimit",
 )
 
 def download(archive):

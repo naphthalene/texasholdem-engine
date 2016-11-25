@@ -89,6 +89,7 @@ public class BotStarter implements Bot {
      */
     public static void main(String[] args) {
         BotParser parser = new BotParser(new BotStarter());
+        System.out.println("Bot started...");
         parser.run();
     }
 

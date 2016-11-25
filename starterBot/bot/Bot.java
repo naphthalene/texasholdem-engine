@@ -1,5 +1,5 @@
 /**
- * www.TheAIGames.com 
+ * www.TheAIGames.com
  * Heads Up Omaha pokerbot
  *
  * Last update: May 07, 2014
@@ -16,6 +16,6 @@ import poker.PokerMove;
 
 public interface Bot {
 
-	public PokerMove getMove(BotState state, Long timeOut);
+    public PokerMove getMove(BotState state, Long timeOut);
 
 }

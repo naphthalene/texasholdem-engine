@@ -13,5 +13,5 @@
 package poker;
 
 public enum CardSuit {
-	SPADES, HEARTS, CLUBS, DIAMONDS
+    SPADES, HEARTS, CLUBS, DIAMONDS
 }

@@ -15,8 +15,7 @@ class Player(object):
         self.actions = {}
 
     def add_actions(self, a):
-        self.actions[a[1]] = a
-        print self.actions
+        self.actions[a[1]] = a[2:]
 
 class Hand(object):
     def __init__(self, hand):
@@ -38,14 +37,20 @@ class Hand(object):
         self.river_c = parts
 
         self.players = {}
-        # import IPython; IPython.embed()
+
+    def __repr__(self):
+        ret = ''
+        for p in self.players.values():
+            ret += (str(p.actions) + '\n')
+        return ret
 
     def add_player(self, player_nick):
         """
         Adds a new player to the dictionary
         """
         assert(len(self.players.keys()) + 1 < self.num_players)
-        self.players[player_nick] = Player()
+        if player_nick not in self.players.keys():
+            self.players[player_nick] = Player()
 
 
 class ArchiveData(object):
@@ -139,6 +144,8 @@ class ArchiveData(object):
                 # TODO move this processing to the Hand class ?
                 actions = l.split()
                 self.hands[actions[1]].players[actions[0]].add_actions(actions)
+
+        print self.hands
 
     def emit_libsvm(self):
         return 'Not yet'

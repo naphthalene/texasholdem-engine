@@ -10,13 +10,12 @@ from sklearn import svm
 ARCHIVES_DIR = './archives/'
 PDB_MATCHER = re.compile(r'.+?\/.+?\/pdb\/pdb\..*')
 
-class Player(object):
-    def __init__(self):
-        self.actions = {}
+# class Action(object):
+#     def __init__(self, ):
 
-    def add_actions(self, a):
-        # import IPython; IPython.embed()
-        self.actions[a[1]] = a[4:8]
+#     def add_actions(self, a):
+#         # import IPython; IPython.embed()
+#         self.actions[a[1]] = a[4:8]
 
 class Hand(object):
     def __init__(self, hand):
@@ -37,27 +36,44 @@ class Hand(object):
         self.turn_c,\
         self.river_c = parts
 
-        self.players = {}
+        self.actions = []
 
     def __repr__(self):
-        ret = ''
-        for p in self.players.values():
-            ret += (str(p.actions) + '\n')
+        ret = '============='
+        ret += ' [{}]\n'.format(self.timestamp)
+        ret += 'Community\n'
+        if any(map(lambda c: c is not None, [self.flop_c1,
+                                             self.flop_c2,
+                                             self.flop_c3])):
+            ret += 'Flop: ({}) [{}]\n'.format(
+                self.flop,
+                ','.join(filter(None, [self.flop_c1,
+                                       self.flop_c2,
+                                       self.flop_c3])))
+        if self.turn_c is not None:
+            ret += 'Turn: ({}) [{}]\n'.format(
+                self.turn,
+                self.turn_c)
+        if self.river_c is not None:
+            ret += 'River: ({}) [{}]\n'.format(
+                self.river,
+                self.river_c)
+
+        ret += 'Actions\n'
+        ret += str(self.actions) + '\n'
         return ret
 
-    def add_player(self, player_nick):
-        """
-        Adds a new player to the dictionary
-        """
-        assert(len(self.players.keys()) + 1 < self.num_players)
-        if player_nick not in self.players.keys():
-            self.players[player_nick] = Player()
+    # def add_player(self, player_nick):
+    #     """
+    #     Adds a new player to the dictionary
+    #     """
+    #     assert(len(self.players.keys()) + 1 < self.num_players)
+    #     if player_nick not in self.players.keys():
+    #         self.players[player_nick] = []
 
 
 class ArchiveData(object):
     def __init__(self, tar, category, code):
-        """
-        """
         self.tar = tar
         self.category = category
         self.code = code
@@ -113,14 +129,14 @@ class ArchiveData(object):
         # 2) Process HROSTER to determine who played each hand
         #    This can technically be inferred from the PDB files but
         #    what the heck
-        for roster in self.tar.extractfile(self.ti_hroster).readlines():
-            # Split with a max of 12 for the timestamp, number of
-            # players, and up to 10 possible players
-            parts = roster.split(None, 12)
-            parts += [None] * (12 - len(parts))
-            for nick in parts[2:]:
-                if nick is not None:
-                    self.hands[parts[0]].add_player(nick)
+        # for roster in self.tar.extractfile(self.ti_hroster).readlines():
+        #     # Split with a max of 12 for the timestamp, number of
+        #     # players, and up to 10 possible players
+        #     parts = roster.split(None, 12)
+        #     parts += [None] * (12 - len(parts))
+        #     for nick in parts[2:]:
+        #         if nick is not None:
+        #             self.hands[parts[0]].add_player(nick)
 
         """
         PDB format
@@ -142,19 +158,28 @@ class ArchiveData(object):
         # 3) Process the PDB files
         for pdb in self.ti_pdbs:
             for l in self.tar.extractfile(pdb).readlines():
-                # TODO move this processing to the Hand class ?
                 actions = l.split()
-                self.hands[actions[1]].players[actions[0]].add_actions(actions)
+                self.hands[actions[1]].actions.append(actions[4:8])
+                # self.hands[actions[1]].players[actions[0]].add_actions(actions)
 
-        print self.hands
+        # print self.hands.values()
 
     def emit_libsvm(self):
+        for _, hand in self.hands.iteritems():
+            for actionset in hand.actions:
+                for i, action in enumerate(actionset):
+                    if action == '-':
+                        continue
+                    if i == 0:
+                        continue
+                    print i, action
+
         return 'Not yet'
 
 
-class PDB(object):
-    def __init__(self, pdb_contents):
-        self.pdb_contents = pdb_contents
+# class PDB(object):
+#     def __init__(self, pdb_contents):
+#         self.pdb_contents = pdb_contents
 
 def process_archive(archive):
     archive_path = os.path.join(ARCHIVES_DIR, archive)
@@ -162,7 +187,7 @@ def process_archive(archive):
     tar = tarfile.open(archive_path, "r:gz")
     data = ArchiveData(tar, category, code)
 
-    data.emit_libsvm()
+    print data.emit_libsvm()
 
 def usage():
     print('''Please supply an archive name as an argument

@@ -165,14 +165,16 @@ class ArchiveData(object):
         # print self.hands.values()
 
     def emit_libsvm(self):
-        for _, hand in self.hands.iteritems():
-            for actionset in hand.actions:
+        for timestamp, hand in self.hands.iteritems():
+            print '------------------'
+            print 'hand {}'.format(timestamp)
+            for u, actionset in enumerate(hand.actions):
+                print 'Actions for player {}'.format(u)
                 for i, action in enumerate(actionset):
                     if action == '-':
                         continue
-                    if i == 0:
-                        continue
-                    print i, action
+                    for s, subaction in enumerate(action):
+                        print i, s, subaction, actionset[:i]
 
         return 'Not yet'
 

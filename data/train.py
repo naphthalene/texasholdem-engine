@@ -15,7 +15,8 @@ class Player(object):
         self.actions = {}
 
     def add_actions(self, a):
-        self.actions[a[1]] = a[2:]
+        # import IPython; IPython.embed()
+        self.actions[a[1]] = a[4:8]
 
 class Hand(object):
     def __init__(self, hand):

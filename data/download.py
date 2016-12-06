@@ -39,6 +39,9 @@ def main():
                     break
             if link is not None:
                 download(link)
+            else:
+                print('Unable to download archive')
+                exit(1)
 
 if __name__ == '__main__':
     main()
